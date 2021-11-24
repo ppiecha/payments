@@ -12,6 +12,11 @@ docker-compose up
 docker-compose -f docker-compose.test.yml up
 ```
 
+## REST API documentation 
+```
+http://127.0.0.1:8003/docs
+```
+
 ## Storage
 Data is stored in Postgres database (with asyncio support).
 Transaction and locking mechanisms guarantee consistency of data. 

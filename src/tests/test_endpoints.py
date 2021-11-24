@@ -4,6 +4,7 @@ import pytest
 from httpx import AsyncClient
 
 from src.main.app import app, database
+from src.main.crud import get_wallet
 from src.main.model import DepositRequest, wallets, TransferRequest
 from src.main.utils.constants import CREATE_USER, TEST_URL, DEPOSIT_MONEY, TRANSFER_MONEY
 
@@ -32,13 +33,11 @@ async def test_deposit_endpoint(async_client, sample_user1):
     deposit_response = await async_client.post(url=DEPOSIT_MONEY, content=deposit_request.json())
     assert deposit_response.status_code == 200
     assert dict(deposit_response.json())['debit_transaction_id'] is not None
-    deposit_request = DepositRequest(user_id=user1.json()['user_id'], amount='1')
     deposit_response = await async_client.post(url=DEPOSIT_MONEY, content=deposit_request.json())
     assert deposit_response.status_code == 200
     assert dict(deposit_response.json())['debit_transaction_id'] is not None
-    query = wallets.select().where(wallets.c.user_id == deposit_request.user_id)
-    wallet_row = await database.fetch_one(query)
-    assert dict(wallet_row._mapping)['balance'] == Decimal('2')
+    wallet_row = await get_wallet(user_id=deposit_request.user_id)
+    assert wallet_row['balance'] == Decimal('2')
     await database.disconnect()
 
 
@@ -65,12 +64,10 @@ async def test_transfer_endpoint(async_client, sample_user1, sample_user2):
     assert transfer_response.status_code == 200
     assert dict(transfer_response.json())['debit_transaction_id'] is not None
     assert dict(transfer_response.json())['credit_transaction_id'] is not None
-    query = wallets.select().where(wallets.c.user_id == deposit_request.user_id)
-    wallet_row = await database.fetch_one(query)
-    assert dict(wallet_row._mapping)['balance'] == Decimal('80')
-    query = wallets.select().where(wallets.c.user_id == transfer_request.to_user_id)
-    wallet_row = await database.fetch_one(query)
-    assert dict(wallet_row._mapping)['balance'] == Decimal('20')
+    wallet_row = await get_wallet(user_id=deposit_request.user_id)
+    assert wallet_row['balance'] == Decimal('80')
+    wallet_row = await get_wallet(user_id=transfer_request.to_user_id)
+    assert wallet_row['balance'] == Decimal('20')
     await database.disconnect()
 
 
