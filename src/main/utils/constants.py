@@ -10,7 +10,7 @@ DEPOSIT_MONEY = '/deposit_money/'
 TRANSFER_MONEY = '/transfer_money/'
 
 # Test URL
-TEST_URL = 'http://127.0.0.1:8000'
+TEST_URL = 'http://127.0.0.1:8003'
 
 # Other constants
 YES = 'Y'

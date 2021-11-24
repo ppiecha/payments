@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     """Automatically read modifications to the configuration from environment variables"""
     app_title: str = APP_TITLE
     testing: str = NO
-    pg_dsn: PostgresDsn = DATABASE_URL
+    DATABASE_URL: PostgresDsn = DATABASE_URL
     pool_min: int = 5
     pool_max: int = 25
 
@@ -19,13 +19,13 @@ class Settings(BaseSettings):
 class AsyncDatabase:
     """Database configuration based on settings"""
     def __init__(self, settings: Settings):
-        logger.info(f'Connecting to {settings.pg_dsn}')
+        logger.info(f'Connecting to {settings.DATABASE_URL}')
         if settings.testing == YES:
-            self.database = Database(settings.pg_dsn, min_size=settings.pool_min, max_size=settings.pool_max,
+            self.database = Database(settings.DATABASE_URL, min_size=settings.pool_min, max_size=settings.pool_max,
                                      force_rollback=True)
             logger.info('Connected (testing mode)')
         else:
-            self.database = Database(settings.pg_dsn, min_size=settings.pool_min, max_size=settings.pool_max)
+            self.database = Database(settings.DATABASE_URL, min_size=settings.pool_min, max_size=settings.pool_max)
             logger.info('Connected')
 
 

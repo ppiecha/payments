@@ -6,10 +6,17 @@
 docker-compose up
 ```
 
+## Run tests
+
+```bash
+docker-compose -f docker-compose.test.yml up
+```
+
 ## Storage
 Data is stored in Postgres database (with asyncio support).
 Transaction and locking mechanisms guarantee consistency of data. 
-Before deposit and transfer operation involved wallets are locked - other requests have to wait until current operation (database transaction) finishes
+
+Proper wallets are locked before deposit and transfer operation - other requests have to wait until current operation (database transaction) finishes
 
 ## Processing mechanism
 Requests are processed asynchronously (ASGI) what guaranties high load performance of the API
