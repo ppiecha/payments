@@ -14,7 +14,6 @@ from src.main.utils.logger import get_console_logger
 
 logger = get_console_logger(name=__name__)
 
-
 app = FastAPI(title=settings.app_title)
 
 

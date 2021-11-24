@@ -6,17 +6,6 @@
 docker-compose up
 ```
 
-## Run locally
-```bash
-uvicorn src.main.app:app --reload --host 0.0.0.0 --port 8000
-```
-
-## Run tests
-
-```bash
-pytest -vv
-```
-
 ## Storage
 Data is stored in Postgres database (with asyncio support).
 Transaction and locking mechanisms guarantee consistency of data. 

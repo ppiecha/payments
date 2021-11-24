@@ -95,3 +95,16 @@ async def test_transfer_bad_amount(async_client, sample_user1, sample_user2):
         deposit_response = await async_client.post(url=TRANSFER_MONEY, content=transfer_request.json())
         assert deposit_response.status_code == 500
     await database.disconnect()
+
+
+@pytest.mark.asyncio
+async def test_transfer_not_enough_money(async_client, sample_user1, sample_user2):
+    await database.connect()
+    user1 = await async_client.post(url=CREATE_USER, content=sample_user1.json())
+    user2 = await async_client.post(url=CREATE_USER, content=sample_user2.json())
+    with pytest.raises(ValueError):
+        transfer_request = TransferRequest(from_user_id=user1.json()['user_id'], to_user_id=user2.json()['user_id'],
+                                           amount='100')
+        deposit_response = await async_client.post(url=TRANSFER_MONEY, content=transfer_request.json())
+        assert deposit_response.status_code == 500
+    await database.disconnect()

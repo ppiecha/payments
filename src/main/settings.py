@@ -34,9 +34,8 @@ database = AsyncDatabase(settings=settings).database
 
 
 async def init_db():
-    """Initialises connection and creates table if there are not exist"""
+    """Initialises connection and creates tables if they don't exist"""
     await database.connect()
     await database.execute(USERS)
     await database.execute(WALLETS)
     await database.execute(TRANSACTIONS)
-

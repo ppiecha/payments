@@ -49,7 +49,7 @@ class Transaction(BaseModel):
 class TransactionType(str, Enum):
     credit = 'credit'
     debit = 'debit'
-    
+
 
 users = Table(
     'users',
@@ -59,7 +59,6 @@ users = Table(
     Column('last_name', String),
 )
 
-
 wallets = Table(
     'wallets',
     metadata,
@@ -67,7 +66,6 @@ wallets = Table(
     Column('user_id', Integer),
     Column('balance', Numeric(asdecimal=True)),
 )
-
 
 transactions = Table(
     'transactions',
@@ -78,4 +76,3 @@ transactions = Table(
     Column('amount', Numeric(asdecimal=True)),
     Column('transaction_timestamp', DateTime),
 )
-

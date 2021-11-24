@@ -1,10 +1,9 @@
 from decimal import Decimal
 
 import pytest
-from sqlalchemy import and_
 
 from src.main.crud import create_user, create_transaction, get_wallet, get_user, get_transaction
-from src.main.model import wallets, users, UserResponse, transactions, DepositRequest, TransferRequest, TransactionType
+from src.main.model import UserResponse, DepositRequest, TransferRequest, TransactionType
 from src.main.settings import database
 
 
