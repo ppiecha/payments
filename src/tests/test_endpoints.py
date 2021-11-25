@@ -5,7 +5,8 @@ from httpx import AsyncClient
 
 from src.main.app import app, database
 from src.main.crud import get_wallet
-from src.main.model import DepositRequest, wallets, TransferRequest
+from src.main.model import DepositRequest, TransferRequest
+from src.main.settings import init_db
 from src.main.utils.constants import CREATE_USER, TEST_URL, DEPOSIT_MONEY, TRANSFER_MONEY
 
 
@@ -17,7 +18,7 @@ async def async_client():
 
 @pytest.mark.asyncio
 async def test_create_user_endpoint(async_client, sample_user1):
-    await database.connect()
+    await init_db()
     response = await async_client.post(url=CREATE_USER, content=sample_user1.json())
     assert response.status_code == 201
     assert list(response.json().keys()) == ['first_name', 'last_name', 'user_id', 'wallet_id']
@@ -27,7 +28,7 @@ async def test_create_user_endpoint(async_client, sample_user1):
 
 @pytest.mark.asyncio
 async def test_deposit_endpoint(async_client, sample_user1):
-    await database.connect()
+    await init_db()
     user1 = await async_client.post(url=CREATE_USER, content=sample_user1.json())
     deposit_request = DepositRequest(user_id=user1.json()['user_id'], amount='1')
     deposit_response = await async_client.post(url=DEPOSIT_MONEY, content=deposit_request.json())
@@ -43,7 +44,7 @@ async def test_deposit_endpoint(async_client, sample_user1):
 
 @pytest.mark.asyncio
 async def test_deposit_bad_user_id(async_client, sample_user1):
-    await database.connect()
+    await init_db()
     deposit_request = DepositRequest(user_id=-1, amount='1')
     with pytest.raises(ValueError):
         deposit_response = await async_client.post(url=DEPOSIT_MONEY, content=deposit_request.json())
@@ -53,7 +54,7 @@ async def test_deposit_bad_user_id(async_client, sample_user1):
 
 @pytest.mark.asyncio
 async def test_transfer_endpoint(async_client, sample_user1, sample_user2):
-    await database.connect()
+    await init_db()
     user1 = await async_client.post(url=CREATE_USER, content=sample_user1.json())
     user2 = await async_client.post(url=CREATE_USER, content=sample_user2.json())
     deposit_request = DepositRequest(user_id=user1.json()['user_id'], amount='100')
@@ -73,7 +74,7 @@ async def test_transfer_endpoint(async_client, sample_user1, sample_user2):
 
 @pytest.mark.asyncio
 async def test_transfer_bad_user_id(async_client):
-    await database.connect()
+    await init_db()
     transfer_request = TransferRequest(from_user_id=-1, to_user_id=-2, amount='1')
     with pytest.raises(ValueError):
         transfer_response = await async_client.post(url=TRANSFER_MONEY, content=transfer_request.json())
@@ -83,7 +84,7 @@ async def test_transfer_bad_user_id(async_client):
 
 @pytest.mark.asyncio
 async def test_transfer_bad_amount(async_client, sample_user1, sample_user2):
-    await database.connect()
+    await init_db()
     user1 = await async_client.post(url=CREATE_USER, content=sample_user1.json())
     user2 = await async_client.post(url=CREATE_USER, content=sample_user2.json())
     with pytest.raises(ValueError):
@@ -96,7 +97,7 @@ async def test_transfer_bad_amount(async_client, sample_user1, sample_user2):
 
 @pytest.mark.asyncio
 async def test_transfer_not_enough_money(async_client, sample_user1, sample_user2):
-    await database.connect()
+    await init_db()
     user1 = await async_client.post(url=CREATE_USER, content=sample_user1.json())
     user2 = await async_client.post(url=CREATE_USER, content=sample_user2.json())
     with pytest.raises(ValueError):

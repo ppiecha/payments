@@ -4,12 +4,13 @@ import pytest
 
 from src.main.crud import create_user, create_transaction, get_wallet, get_user, get_transaction
 from src.main.model import UserResponse, DepositRequest, TransferRequest, TransactionType
-from src.main.settings import database
+from src.main.app import database
+from src.main.settings import init_db
 
 
 @pytest.mark.asyncio
 async def test_create_client(sample_user1):
-    await database.connect()
+    await init_db()
     user = await create_user(request=sample_user1)
     user_row = await get_user(first_name=sample_user1.first_name, last_name=sample_user1.last_name)
     wallet = await get_wallet(user_id=user_row['id'])
@@ -20,7 +21,7 @@ async def test_create_client(sample_user1):
 
 @pytest.mark.asyncio
 async def test_deposit(sample_user1):
-    await database.connect()
+    await init_db()
     to_user = await create_user(request=sample_user1)
     deposit = DepositRequest(user_id=to_user.user_id, amount='1.123')
     transaction = await create_transaction(to_user_id=deposit.user_id, amount=deposit.amount)
@@ -38,7 +39,7 @@ async def test_deposit(sample_user1):
 
 @pytest.mark.asyncio
 async def test_transfer(sample_user1, sample_user2):
-    await database.connect()
+    await init_db()
     from_user = await create_user(request=sample_user1)
     deposit = DepositRequest(user_id=from_user.user_id, amount='100')
     transaction = await create_transaction(to_user_id=deposit.user_id, amount=deposit.amount)
@@ -59,7 +60,7 @@ async def test_transfer(sample_user1, sample_user2):
 
 @pytest.mark.asyncio
 async def test_negative_amount(sample_user1):
-    await database.connect()
+    await init_db()
     to_user = await create_user(request=sample_user1)
     with pytest.raises(ValueError):
         deposit = DepositRequest(user_id=to_user.user_id, amount='-1')
