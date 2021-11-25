@@ -75,7 +75,6 @@ async def create_transaction(to_user_id: int, amount: str, from_user_id: int = N
     else:
         from_wallet_balance = None
         query = select(wallets).where(wallets.c.user_id.in_([from_user_id, to_user_id])).with_for_update()
-        logger.debug(query)
         for row in await database.fetch_all(query):
             row_dict = dict(row._mapping)
             if row_dict['user_id'] == to_user_id:

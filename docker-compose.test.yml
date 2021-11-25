@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
-    command: pytest --cov=src/main src/tests -vv
+    command: pytest --cov=src/main --flake8 src/tests -vv
     ports:
       - 8003:8000
     environment:
